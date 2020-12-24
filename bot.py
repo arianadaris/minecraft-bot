@@ -27,7 +27,7 @@ async def status_task():
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     bot.loop.create_task(status_task())
-    
+
 
 @bot.command(name='status')
 async def check_status(ctx):
@@ -39,13 +39,15 @@ async def check_status(ctx):
 
 @bot.command(name='who')
 async def get_online_players(ctx):
-    if server.get_players() == 0:
+    player_count = server.get_players()
+    if player_count == 0:
         await ctx.message.channel.send('There are no players on the server.')
     else:
+        players = "".join(server.get_player_names())
         if server.get_players() == 1:
-            await ctx.message.channel.send(f'There is 1 player on the server: {server.get_player_names()}')
+            await ctx.message.channel.send(f'There is 1 player on the server: ```{players}```')
         else:
-            await ctx.message.channel.send(f'There are {server.get_players()} players on the server: {server.get_player_names()}')
+            await ctx.message.channel.send(f'There are {player_count} players on the server: ```{players}```')
 
 
 @bot.command()
