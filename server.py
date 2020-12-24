@@ -66,21 +66,34 @@ class Server:
         return names
     
 
+
+
 class World:
     """
+    A class to handle Minecraft world data.
 
+    Attributes
+    ----------
+    `coords_file` : str
+        Name of coordinates json file.
     
     Methods
     ----------
-    `save_coords` : None
-        Saves coordinates and message to json file.
+    `save_coords` : bool
+        Saves coordinates and description to json file.
+    
+    `load_coords` : list
+        Loads coordinates saved in json file.
+
+    `check_coords_file` : bool
+        Checks if coordinates json file exists.
 
     """
     def __init__(self):
         self.coords_file = 'coordinates.json'
 
 
-    def save_coordinates(self, coords):
+    def save_coords(self, coords):
         """
         Method to save world coordinates.
 
@@ -104,17 +117,15 @@ class World:
             file.write(f'{str(pos)} - {descr}\n')
             file.close()
             return True
-        return False
-        
+        return False  
 
 
-    def load_coordinates(self):
+    def load_coords(self):
         """
         Gets the saved coordinates from json file.
 
         Returns:
         ----------
-        None : None if coordinates file does not exist
         `list` : list with coordinates ()
         """
         file = open(self.coords_file, 'r')
@@ -122,6 +133,13 @@ class World:
 
 
     def check_coords_file(self):
+        """
+        Checks if coordinates json file was already created.
+
+        Returns:
+        ----------
+        True : True if file exists
+        """
         if path.exists(self.coords_file):
             return True
         return False
