@@ -27,12 +27,7 @@ async def status_task():
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
     bot.loop.create_task(status_task())
-
-
-@bot.command(name='check')
-async def check(ctx):
-    await ctx.message.channel.send("I'm good.")
-
+    
 
 @bot.command(name='status')
 async def check_status(ctx):
