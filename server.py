@@ -23,9 +23,8 @@ class Server:
         Returns the names of the players online.
 
     """
-    def __init__(self, ip):
-        self.ip = ip
-        self.server = MinecraftServer.lookup(self.ip)
+    def __init__(self, ip, port):
+        self.server = MinecraftServer.lookup(f'{ip}:{port}')
     
 
     def check_status(self):
@@ -65,7 +64,7 @@ class Server:
         names = [user['name'] for user in self.server.status().raw['players']['sample']]
         return names
     
-
+    
 
 
 class World:
@@ -143,6 +142,25 @@ class World:
         if path.exists(self.coords_file):
             return True
         return False
+
+    
+    def convert_coords(self, coords):
+        """
+        Converts overworld coordinates to nether coordinates.
+
+        Parameters:
+        ------------
+        `coords` : list
+            List of xPos, yPos, zPos and description
+
+        Returns:
+        ----------
+        `list` : list of coordinates
+        """
+        xPos = int(int(coords[0]) / 8)
+        yPos = int(coords[1])
+        zPos = int(int(coords[2]) / 8)
+        return list(xPos, yPos, zPos)
 
 
     def __check_coordinates(self, pos):

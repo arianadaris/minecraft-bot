@@ -2,31 +2,31 @@
 import os
 import asyncio
 from dotenv import load_dotenv
-from discord import Game
-from discord.ext import commands
+from discord import Game, Status
+from discord.ext import commands, tasks
 from server import Server, World
 
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 IP = os.getenv('SERVER_IP')
-server = Server(IP)
+PORT = os.getenv('SERVER_PORT')
+
+server = Server(IP, PORT)
 world = World()
 bot = commands.Bot(command_prefix='!')
-
-
-async def status_task():
-    while True:
-        await bot.change_presence(activity=Game(f'{server.get_players()} of 36 players online.'))
-        await asyncio.sleep(3)
-        await bot.change_presence(activity=Game(f'{server.get_players()} of 36 players online.'))
-        await asyncio.sleep(3)
 
 
 @bot.event
 async def on_ready():
     print(f'{bot.user.name} has connected to Discord!')
-    bot.loop.create_task(status_task())
+    set_status.start()
+
+
+@tasks.loop(seconds=3)
+async def set_status():
+    await bot.change_presence(activity=Game(f'{server.get_players()} of 36 players online.'))
+    await asyncio.sleep(3)
 
 
 @bot.command(name='status')
@@ -50,6 +50,17 @@ async def get_online_players(ctx):
             await ctx.message.channel.send(f'There are {player_count} players on the server: ```{players}```')
 
 
+@bot.command(name='dc')
+async def disconnect(ctx):
+    set_status.stop()
+    await bot.change_presence(status=Status.offline)
+    try:
+        await bot.close()
+        print('Minecraft Bot has disconnected from Discord.')
+    except RuntimeError:
+        pass
+
+
 @bot.command()
 async def save(ctx, *args):
     if world.save_coords(list(args)):
@@ -65,6 +76,11 @@ async def coords(ctx, *args):
     else:
         coords = "".join(world.load_coords())
         await ctx.message.channel.send(f'Coordinates:```{coords}```')
+
+
+@bot.command()
+async def convert(ctx, *args):
+    await ctx.message.channel.send(f'Nether Coordinates: ```{world.convert_coords(list(args))}```')
 
 
 bot.run(TOKEN)
