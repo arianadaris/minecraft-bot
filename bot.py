@@ -4,16 +4,18 @@ import asyncio
 from dotenv import load_dotenv
 from discord import Game, Status
 from discord.ext import commands, tasks
-from server import Server, World
+from server import Server, World, Command
 
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 IP = os.getenv('SERVER_IP')
 PORT = os.getenv('SERVER_PORT')
+PASSWORD = os.getenv('CLIENT_PASSWORD')
 
 server = Server(IP, PORT)
 world = World()
+cmd = Command(IP, PASSWORD)
 bot = commands.Bot(command_prefix='!')
 
 
