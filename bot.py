@@ -4,7 +4,7 @@ import asyncio
 from dotenv import load_dotenv
 from discord import Game, Status
 from discord.ext import commands, tasks
-from server import Server, World, Command
+from server import Server, World
 
 
 load_dotenv()
@@ -15,7 +15,7 @@ PASSWORD = os.getenv('CLIENT_PASSWORD')
 
 server = Server(IP, PORT)
 world = World()
-cmd = Command(IP, PASSWORD)
+#cmd = Command(IP, PASSWORD)
 bot = commands.Bot(command_prefix='!')
 
 
@@ -83,6 +83,12 @@ async def coords(ctx, *args):
 @bot.command()
 async def convert(ctx, *args):
     await ctx.message.channel.send(f'Nether Coordinates: ```{world.convert_coords(list(args))}```')
+
+
+@bot.command()
+async def wiki(ctx, *args):
+    search = "_".join(list(args))
+    await ctx.message.channel.send(f'https://minecraft.gamepedia.com/{search}')
 
 
 bot.run(TOKEN)
